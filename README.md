@@ -14,8 +14,7 @@ Este proyecto es una solución Full Stack para la gestión de inventario en tiem
 * **Base de Datos:** Google Sheets.
 
 ## 📸 Capturas
-![Pantalla de Venta](./img/app-celular.png)
+<img src="./img/foto.png" width="250" alt="Captura App">
 ![Control de Stock](./img/excel-stock.png)
 ## 🔗 Demo
-* [Ver código fuente Backend](./backend-appscript/Codigo.gs)
 * [Ver sitio web del cliente](https://simonfabrizio.github.io/vivero-web/)
