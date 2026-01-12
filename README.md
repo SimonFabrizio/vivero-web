@@ -20,5 +20,5 @@ Este proyecto es una solución Full Stack para la gestión de inventario en tiem
 </div>
 
 ## 🔗 Demo
-* [📂 Ver código fuente Backend](./backend-appscript/Codigo.gs)
+* [📂 Ver código fuente Backend](https://github.com/SimonFabrizio/vivero-web/blob/main/backend-app/Codigo.js)
 * [🚀 Ver sitio web del cliente](https://simonfabrizio.github.io/vivero-web/)
