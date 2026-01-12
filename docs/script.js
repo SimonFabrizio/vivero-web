@@ -182,7 +182,7 @@ function closeCart() { cartSidebar.classList.remove('open'); cartOverlay.classLi
 
 function checkout() {
     if (cart.length === 0) return;
-    const phone = "5492215555555"; 
+    const phone = "2325432"; 
     let msg = "Hola La Galería! Quisiera reservar:%0A%0A";
     cart.forEach(i => msg += `• ${i.nombre} (x${i.cantidad})%0A`);
     msg += `%0ATotal estimado: ${cartTotalEl.innerText}%0A%0A¿Me confirman disponibilidad?`;
