@@ -62,7 +62,7 @@ async function fetchProducts() {
     productsContainer.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1;">Cargando colección...</p>';
     
     // Si no hay URL configurada, usar local o mostrar aviso
-    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('https://script.google.com/macros/s/AKfycbxspRO9eAO3G5AbS3cEW-LZepTc_5G8W_IlgV5Pv_Ec_LN615J5pFyf8jlkqetwYGex/exec')) {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('AQUI_PEGAS')) {
 
          productsContainer.innerHTML = '<p style="text-align:center; width:100%; grid-column:1/-1;">⚠️ Configura el enlace de Google Sheets en script.js</p>';
          return;
@@ -182,7 +182,7 @@ function closeCart() { cartSidebar.classList.remove('open'); cartOverlay.classLi
 
 function checkout() {
     if (cart.length === 0) return;
-    const phone = "2325432"; 
+    const phone = "544232321"; 
     let msg = "Hola La Galería! Quisiera reservar:%0A%0A";
     cart.forEach(i => msg += `• ${i.nombre} (x${i.cantidad})%0A`);
     msg += `%0ATotal estimado: ${cartTotalEl.innerText}%0A%0A¿Me confirman disponibilidad?`;
