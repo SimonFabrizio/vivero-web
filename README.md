@@ -13,9 +13,12 @@ Este proyecto es una solución Full Stack para la gestión de inventario en tiem
 * **Backend/Serverless:** Google Apps Script.
 * **Base de Datos:** Google Sheets.
 
-## 📸 Capturas
-<img src="./img/app-celularOTO.png" width="250" alt="Captura de pantalla">
-![Control de Stock](./img/excel-stock.png)
+## 📸 Capturas del Sistema
+
+<div align="center">
+  <img src="./img/excel-stock.png" alt="Control de Stock" width="600">
+</div>
+
 ## 🔗 Demo
-* [Ver código fuente Backend](./backend-appscript/Codigo.gs)
-* [Ver sitio web del cliente][https://simonfabrizio.github.io/vivero-web/]
+* [📂 Ver código fuente Backend](./backend-appscript/Codigo.gs)
+* [🚀 Ver sitio web del cliente](https://simonfabrizio.github.io/vivero-web/)
