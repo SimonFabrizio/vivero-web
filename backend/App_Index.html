@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* VARIABLES Y RESET */
+    :root { 
+      --primary: #2F352B; 
+      --accent: #CFA035; 
+      --bg: #F4F6F8; 
+      --white: #ffffff;
+      --red: #E53935;
+      --green: #43A047;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Roboto', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 100px; color: #333; }
+    
+    /* HEADER FIJO */
+    header { 
+      background: var(--white); padding: 10px 15px; position: sticky; top: 0; z-index: 100; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+    }
+    
+    .search-box {
+      position: relative; width: 100%;
+    }
+    .search-box input {
+      width: 100%; padding: 12px 40px 12px 15px; border-radius: 8px; 
+      border: 1px solid #ddd; background: #f9f9f9; font-size: 16px; outline: none;
+    }
+    .search-box input:focus { border-color: var(--accent); background: #fff; }
+    .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #888; }
+
+    /* FILTROS */
+    .filter-container {
+      background: var(--white); padding: 5px 15px 15px; 
+      position: sticky; top: 60px; z-index: 99;
+      border-bottom: 1px solid #eee;
+    }
+    .filter-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    
+    .chip {
+      background: #eee; color: #555; padding: 6px 14px; border-radius: 20px; 
+      font-size: 14px; font-weight: 500; white-space: nowrap; border: none; cursor: pointer;
+    }
+    .chip.active { background: var(--primary); color: var(--white); }
+
+    /* GRILLA PRODUCTOS */
+    .grid { 
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; 
+    }
+    .card { 
+      background: var(--white); border-radius: 12px; overflow: hidden; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; 
+      position: relative;
+    }
+    .card-img { 
+      width: 100%; height: 140px; object-fit: cover; background: #eee; 
+    }
+    .card-body { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; }
+    
+    .card-title { font-size: 14px; font-weight: 700; margin: 0 0 4px; line-height: 1.3; }
+    .card-id { font-size: 11px; color: #999; margin-bottom: 6px; }
+    
+    .stock-badge { 
+      font-size: 11px; font-weight: bold; color: var(--green); background: #E8F5E9; 
+      padding: 3px 6px; border-radius: 4px; align-self: flex-start; margin-bottom: 8px;
+    }
+    .stock-badge.low { color: #F57C00; background: #FFF3E0; }
+    
+    .card-footer { 
+      margin-top: auto; display: flex; justify-content: space-between; align-items: center; 
+    }
+    .price { font-size: 16px; font-weight: 700; color: var(--accent); }
+    
+    .btn-add {
+      background: var(--primary); color: white; border: none; width: 32px; height: 32px; 
+      border-radius: 50%; font-size: 20px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.1s;
+    }
+    .btn-add:active { transform: scale(0.9); }
+    .btn-add:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* OVERLAY AGOTADO */
+    .card.agotado { opacity: 0.6; pointer-events: none; }
+    .card.agotado .stock-badge { background: #FFEBEE; color: var(--red); }
+
+    /* BOTÓN FLOTANTE CARRITO (FAB) */
+    .fab-cart {
+      position: fixed; bottom: 20px; right: 20px; 
+      background: var(--accent); color: var(--primary);
+      height: 60px; padding: 0 25px; border-radius: 30px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 4px 15px rgba(207, 160, 53, 0.4);
+      cursor: pointer; z-index: 500; font-weight: bold; font-size: 16px;
+      transition: transform 0.2s;
+    }
+    .fab-cart:active { transform: scale(0.95); }
+    .cart-count { 
+      background: var(--primary); color: white; font-size: 12px; 
+      width: 24px; height: 24px; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+    }
+
+    /* MODAL CARRITO */
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 1000; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    
+    .cart-sheet {
+      position: fixed; bottom: 0; left: 0; width: 100%; 
+      background: white; border-radius: 20px 20px 0 0;
+      max-height: 85vh; display: flex; flex-direction: column;
+      transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1001;
+    }
+    .cart-sheet.open { transform: translateY(0); }
+
+    .sheet-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .sheet-body { padding: 0 20px; overflow-y: auto; flex-grow: 1; }
+    .sheet-footer { padding: 20px; border-top: 1px solid #eee; }
+
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
+    .item-info h4 { margin: 0 0 4px; font-size: 15px; }
+    .item-info span { color: #888; font-size: 13px; }
+    .btn-trash { background: none; border: none; color: var(--red); font-size: 20px; padding: 10px; cursor: pointer; }
+
+    .btn-checkout {
+      width: 100%; background: var(--primary); color: white; border: none;
+      padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold;
+    }
+    .btn-checkout:disabled { background: #ccc; }
+
+    /* TOAST NOTIFICATION */
+    #toast {
+      visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
+      text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 2000;
+      left: 50%; bottom: 90px; transform: translateX(-50%); font-size: 14px; opacity: 0; transition: opacity 0.3s;
+    }
+    #toast.show { visibility: visible; opacity: 1; }
+
+    /* LOADER */
+    #loading-overlay {
+      position: fixed; top:0; left:0; width:100%; height:100%; background: white;
+      z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Buscar planta o código..." onkeyup="handleSearch()">
+      <span class="search-icon">🔍</span>
+    </div>
+  </header>
+
+  <div class="filter-container">
+    <div class="filter-scroll" id="filters">
+      </div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <div class="fab-cart" onclick="toggleCart(true)">
+    <span class="cart-count" id="fab-count">0</span>
+    <span>Ver Carrito</span>
+  </div>
+
+  <div class="modal-backdrop" id="backdrop" onclick="toggleCart(false)"></div>
+  <div class="cart-sheet" id="cartSheet">
+    <div class="sheet-header">
+      <h2 style="margin:0; font-size:18px;">Tu Pedido</h2>
+      <button onclick="toggleCart(false)" style="background:none; border:none; font-size:24px;">&times;</button>
+    </div>
+    <div class="sheet-body" id="cartList">
+      <p style="text-align:center; margin-top:30px; color:#999;">El carrito está vacío</p>
+    </div>
+    <div class="sheet-footer">
+      <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; font-size:18px;">
+        <span>Total:</span>
+        <span id="cartTotal">$0</span>
+      </div>
+      <button class="btn-checkout" id="btnPay" onclick="submitOrder()">COBRAR VENTA</button>
+    </div>
+  </div>
+
+  <div id="toast">Producto agregado</div>
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; color:#666; font-weight:500;">Cargando Inventario...</p>
+  </div>
+
+  <script>
+    // --- ESTADO ---
+    let inventory = [];
+    let cart = [];
+    let activeCategory = 'Todos';
+
+    // --- INICIO ---
+    window.onload = loadData;
+
+    function loadData() {
+      google.script.run
+        .withSuccessHandler(data => {
+          inventory = data;
+          renderFilters();
+          renderGrid(inventory);
+          document.getElementById('loading-overlay').style.display = 'none';
+        })
+        .withFailureHandler(err => {
+          alert("Error de conexión. Recarga la página.");
+        })
+        .getInventoryData();
+    }
+
+    // --- RENDERIZADO ---
+    function renderFilters() {
+      const cats = ['Todos', ...new Set(inventory.map(i => i.categoria || 'Varios'))];
+      const container = document.getElementById('filters');
+      container.innerHTML = cats.map(c => 
+        `<button class="chip ${c === 'Todos' ? 'active' : ''}" onclick="setFilter('${c}', this)">${c}</button>`
+      ).join('');
+    }
+
+    function renderGrid(data) {
+      const container = document.getElementById('grid');
+      container.innerHTML = '';
+      
+      if(data.length === 0) {
+        container.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#999; margin-top:20px;">No se encontraron resultados.</p>';
+        return;
+      }
+
+      data.forEach(p => {
+        // Cálculo de stock disponible en tiempo real (restando lo que ya tengo en el carrito)
+        const inCart = cart.find(c => c.id === p.id)?.cantidad || 0;
+        const available = p.stock - inCart;
+        const isLow = available <= 3 && available > 0;
+        const isOut = available <= 0;
+
+        const card = document.createElement('div');
+        card.className = `card ${isOut ? 'agotado' : ''}`;
+        card.innerHTML = `
+          <img src="${p.imagen || 'https://via.placeholder.com/150'}" class="card-img" onerror="this.src='https://via.placeholder.com/150'">
+          <div class="card-body">
+            <div class="stock-badge ${isLow ? 'low' : ''}">
+              ${isOut ? 'SIN STOCK' : `Disp: ${available}`}
+            </div>
+            <h3 class="card-title">${p.nombre}</h3>
+            <span class="card-id">ID: ${p.id}</span>
+            <div class="card-footer">
+              <span class="price">$${p.precio.toLocaleString()}</span>
+              <button class="btn-add" onclick="addToCart('${p.id}')" ${isOut ? 'disabled' : ''}>+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // --- LÓGICA DE NEGOCIO ---
+    function setFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      handleSearch();
+    }
+
+    function handleSearch() {
+      const term = document.getElementById('search').value.toLowerCase();
+      const filtered = inventory.filter(p => {
+        const matchText = p.nombre.toLowerCase().includes(term) || p.id.toLowerCase().includes(term);
+        const matchCat = activeCategory === 'Todos' || p.categoria === activeCategory;
+        return matchText && matchCat;
+      });
+      renderGrid(filtered);
+    }
+
+    function addToCart(id) {
+      const product = inventory.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      const currentQty = existing ? existing.cantidad : 0;
+
+      if (currentQty + 1 > product.stock) {
+        showToast("⛔ No hay más stock disponible");
+        return;
+      }
+
+      if (existing) {
+        existing.cantidad++;
+        existing.total = existing.cantidad * product.precio;
+      } else {
+        cart.push({ ...product, cantidad: 1, total: product.precio });
+      }
+
+      showToast("Agregado al carrito");
+      updateCartUI();
+      // Re-renderizar grilla para actualizar el contador de "Disp"
+      handleSearch(); 
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(c => c.id !== id);
+      updateCartUI();
+      handleSearch();
+      if(cart.length === 0) toggleCart(false);
+    }
+
+    function updateCartUI() {
+      const total = cart.reduce((sum, i) => sum + i.total, 0);
+      const count = cart.reduce((sum, i) => sum + i.cantidad, 0);
+
+      // Botón flotante
+      document.getElementById('fab-count').innerText = count;
+      
+      // Lista del modal
+      const list = document.getElementById('cartList');
+      if(cart.length === 0) {
+        list.innerHTML = '<p style="text-align:center; margin-top:30px; color:#999;">El carrito está vacío</p>';
+        document.getElementById('btnPay').disabled = true;
+      } else {
+        list.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div class="item-info">
+              <h4>${item.nombre}</h4>
+              <span>${item.cantidad} x $${item.precio.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <strong style="color:var(--accent);">$${item.total.toLocaleString()}</strong>
+              <button class="btn-trash" onclick="removeFromCart('${item.id}')">🗑️</button>
+            </div>
+          </div>
+        `).join('');
+        document.getElementById('btnPay').disabled = false;
+      }
+      
+      document.getElementById('cartTotal').innerText = '$' + total.toLocaleString();
+    }
+
+    // --- UI HELPERS ---
+    function toggleCart(open) {
+      const sheet = document.getElementById('cartSheet');
+      const backdrop = document.getElementById('backdrop');
+      
+      if(open) {
+        if(cart.length === 0) return showToast("El carrito está vacío");
+        sheet.classList.add('open');
+        backdrop.classList.add('open');
+      } else {
+        sheet.classList.remove('open');
+        backdrop.classList.remove('open');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.className = "show";
+      setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+    }
+
+    // --- COBRO ---
+    function submitOrder() {
+      if(!confirm("¿Confirmar venta por " + document.getElementById('cartTotal').innerText + "?")) return;
+
+      const btn = document.getElementById('btnPay');
+      btn.disabled = true;
+      btn.innerText = "Procesando...";
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if(res.success) {
+            alert("✅ Venta Exitosa");
+            cart = [];
+            toggleCart(false);
+            updateCartUI();
+            // Recargar datos para asegurar stock fresco
+            loadData();
+          } else {
+            alert("❌ Error: " + res.message);
+            loadData(); // Recargar para ver stock real
+          }
+          btn.innerText = "COBRAR VENTA";
+          btn.disabled = false;
+        })
+        .withFailureHandler(err => {
+          alert("Error de red. Verifica tu conexión.");
+          btn.disabled = false;
+        })
+        .processSale(cart);
+    }
+  </script>
+</body>
+</html>

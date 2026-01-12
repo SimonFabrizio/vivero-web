@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Galería de las Plantas</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="container nav-container">
+            <div class="logo">
+                La Galería de las Plantas<span class="logo-accent">.</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#inicio">Inicio</a>
+                <a href="#catalogo">Colección</a>
+                <a href="#contacto">Visítanos</a>
+            </nav>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button id="theme-toggle" class="theme-btn" title="Cambiar Tema">
+                    <svg class="moon-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg class="sun-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+
+                <div class="cart-wrapper" onclick="toggleCart()">
+                    <div class="cart-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    </div>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <span class="badge-editorial">Nueva Temporada</span>
+            <h1>Tu refugio<br>botánico</h1>
+            <p>Una selección cuidada de plantas y objetos para conectar con la naturaleza.</p>
+            <a href="#catalogo" class="btn btn-primary">Ver Disponibles</a>
+        </div>
+    </section>
+
+    <section class="features-bar">
+        <div class="container features-grid">
+            <div class="feature">
+                <div class="feature-icon">
+                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                </div>
+                <h3>Selección Premium</h3>
+                <p>Plantas sanas y fuertes</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/><path d="M9 16c.85.65 1.9.9 3 .9s2.15-.25 3-.9"/></svg>
+                </div>
+                <h3>Atención Personalizada</h3>
+                <p>Te asesoramos en el vivero</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </div>
+                <h3>Todos los Medios</h3>
+                <p>Efectivo, Débito y Crédito</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="catalogo" class="catalog-section container">
+        <div class="section-header">
+            <h2>Nuestra Colección</h2>
+            <p class="subtitle">Piezas vivas elegidas para iluminar tu hogar.</p>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterProducts('todos')">Ver Todo</button>
+            <button class="filter-btn" onclick="filterProducts('interior')">Interior</button>
+            <button class="filter-btn" onclick="filterProducts('exterior')">Exterior</button>
+            <button class="filter-btn" onclick="filterProducts('macetas')">Macetas</button>
+            <button class="filter-btn" onclick="filterProducts('tierras')">Sustratos</button>
+        </div>
+
+        <div class="products-grid" id="products-container">
+            <p style="text-align:center; width:100%; grid-column:1/-1;">Cargando catálogo...</p>
+        </div>
+    </section>
+
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Tu Selección</h3>
+            <button class="close-cart" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="empty-msg">Aún no has elegido tus plantas.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total estimado:</span>
+                <span id="cart-total">$0</span>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px; text-align: center;">*Pago y retiro a coordinar.</p>
+            <button onclick="checkout()" class="btn btn-whatsapp">
+                Reservar por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <footer id="contacto">
+        <div class="container footer-content">
+            <div class="footer-col">
+                <h3>La Galería de las Plantas<span class="logo-accent">.</span></h3>
+                <p>Creamos espacios verdes con alma.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Visítanos</h4>
+                <p>Calle Perseverancia 4470<br>Berisso, Buenos Aires</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Perseverancia+4470+Berisso" target="_blank" class="footer-link map-link">
+                    📍 Ver en Google Maps
+                </a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Síguenos</h4>
+                <a href="https://www.instagram.com/lagaleriadelasplantas" target="_blank" class="footer-link instagram-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    @lagaleriadelasplantas
+                </a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 La Galería de las Plantas.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
